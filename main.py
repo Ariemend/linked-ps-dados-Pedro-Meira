@@ -1,41 +1,60 @@
 import pandas as pd
 import streamlit as st
-import modulo as m
+import filtros as fl
+import analise as an
 
 #Inicializando a base de dados e os elementos base do streamlit
-base_de_dados = pd.read_csv('vendas_linked_ps.csv', parse_dates=["order_date"])
-st.sidebar.success("Select a page above:")
+base_de_dados = pd.read_csv('vendas_linked_ps.csv', parse_dates=["order_date"]) #pega a base de dados, transformando os elementos de "order_date" em datetime
+st.sidebar.success("Select a page above:") #inicializa a barra lateral
 
 
+#Titulo e apresentacao
+st.title("Painel de Vendas PS 2024",text_alignment="left")
+st.caption("Todas as informações relevantes sobre a empresa PS no ano de 2024. Clique na barra a esquerda para navegar o dashboard",text_alignment="left")
+st.divider()
 
+#Primeiras informacoes
+st.dataframe(base_de_dados)
+col1, col2= st.columns((2),wrap=True,border=True)
+count1 = st.container(border=True)
 
-# Pegar as informações relevantes
-total_de_pedidos = len(base_de_dados)
-faturamento = base_de_dados["total_value"].sum()
-n_vendas_validas = m.vendas_completas(base_de_dados)
-n_vendas_canceladas = n_vendas_validas - total_de_pedidos
-taxa_cancelamento = m.taxa_de_cancelamento(base_de_dados)
-n_pedidos_entregues = m.pedidos_entregues(base_de_dados)
-valor_por_mes = m.valortotal_por_mes(base_de_dados)
-media_valor_produto = m.media_valor_produto(base_de_dados)
+#Pegando os dados relevantes
 
-#Construção da pagina em si
-st.title("Bem vindo!!",text_alignment="left")
-st.caption(f"Uma produção linked.", text_alignment="left")
+#coluna 1
+pedidos_completos = fl.ordens_por_status(base_de_dados,["Entregue","Em transito"])
+receita_total = an.receita_das_ordens(pedidos_completos)
 
-st.subheader("Estatisticas Gerais da empresa:",text_alignment="center")
-col1, col2 = st.columns([3,2],border=True)
+pedidos_em_transito = fl.ordens_por_status(base_de_dados,["Em transito"])
+receita_pendente = an.receita_das_ordens(pedidos_em_transito)
+porcentagem_pendente = (receita_pendente / receita_total) * 100
 
+#coluna 2
+pedidos_cancelados = fl.ordens_por_status(base_de_dados,["Cancelado"])
+taxa_cancelamento = an.taxa_cancelamento(base_de_dados)
+receita_perdida = an.receita_das_ordens(pedidos_cancelados)
+porcentagem_perdida = (receita_perdida / receita_total) * 100
+
+#container 1
+total_pedidos = an.numero_das_ordens(base_de_dados)
+total_pedidos_entregues = an.numero_das_ordens(pedidos_completos)
+total_pedidos_em_transito = an.numero_das_ordens(pedidos_em_transito)
+total_pedidos_cancelados = an.numero_das_ordens(pedidos_cancelados)
+
+#Aplicando no streamlit
 with col1:
-    col1a, col1b = st.columns(2,wrap=True)
-    col1a.metric("Número Total de Pedidos",value=total_de_pedidos,)
-    col1a.metric("Pedidos Completos:",value=n_vendas_validas)
-    col1b.metric("Pedidos em trânsito",value=n_pedidos_entregues)
-    col1b.metric("Taxa de Cancelamento:", value=str(taxa_cancelamento) + "%")
+    st.metric("Receita Liquida",receita_total,format="accounting",delta_description="S/ Cancelados")
+    st.metric("Receita Pendente",receita_pendente,format="accounting",delta=porcentagem_pendente,delta_description="% Receita Total",delta_arrow="off",delta_color="grey")
 
 with col2:
-    st.metric("Faturamento",value=faturamento,format="accounting")
-    st.metric("Media de valor p/ ordem", value=media_valor_produto)
+    st.metric("Receita Perdida",receita_perdida,format="accounting",delta=porcentagem_perdida,delta_description="% Perdida",delta_arrow="off",delta_color="inverse")
+    st.metric("Taxa de Cancelamento",taxa_cancelamento,format="percent")
 
-st.line_chart(valor_por_mes,x="mes",y="total_value",x_label="Mês do Ano", y_label="Valor Total")
+with count1:
+    col3a, col3b, col3c = st.columns(3)
+    col3a.metric("Total de Pedidos",total_pedidos)
+    col3b.metric("N/ Pedidos Em Transito",total_pedidos_em_transito,delta=(round((total_pedidos_em_transito/total_pedidos)*100,2)),delta_color="green",delta_arrow="off")
+    col3c.metric("N/ Pedidos Cancelados",total_pedidos_cancelados,delta=(round((total_pedidos_cancelados/total_pedidos)*100,2)),delta_color="red",delta_arrow="off")
+
+#Grafico 1
+st.bar_chart(pedidos_completos,x="order_date",y="total_value",x_label="Data da Ordem",y_label="Valor Total")
 
