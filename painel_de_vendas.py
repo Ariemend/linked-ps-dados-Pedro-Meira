@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+import plotly.express as px
 import filtros as fl
 import analise as an
 
@@ -14,7 +15,6 @@ st.caption("Todas as informações relevantes sobre a empresa PS no ano de 2024.
 st.divider()
 
 #Primeiras informacoes
-st.dataframe(base_de_dados)
 col1, col2= st.columns((2),wrap=True,border=True)
 count1 = st.container(border=True)
 
@@ -55,6 +55,17 @@ with count1:
     col3b.metric("N/ Pedidos Em Transito",total_pedidos_em_transito,delta=(round((total_pedidos_em_transito/total_pedidos)*100,2)),delta_color="green",delta_arrow="off")
     col3c.metric("N/ Pedidos Cancelados",total_pedidos_cancelados,delta=(round((total_pedidos_cancelados/total_pedidos)*100,2)),delta_color="red",delta_arrow="off")
 
-#Grafico 1
-st.bar_chart(pedidos_completos,x="order_date",y="total_value",x_label="Data da Ordem",y_label="Valor Total")
+#Graficos
+col1, col2 = st.columns(2,border=True)
+base_por_mes = fl.coluna_por_mes(pedidos_completos)
+grafico_valor_por_mes = px.bar(base_por_mes,x="order_date",y="total_value")
+grafico_proporcao_metodo = px.pie(base_de_dados,names="payment_method",values="quantity")
+
+with col1:
+    st.subheader("Faturamento x Tempo",text_alignment="center")
+    st.plotly_chart(grafico_valor_por_mes)
+with col2:
+    st.subheader("Proporção Metódo de Pagamento",text_alignment="center")
+    st.plotly_chart(grafico_proporcao_metodo)
+
 

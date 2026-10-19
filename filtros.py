@@ -43,3 +43,14 @@ def pedidos_por_produtos(df,produtos):
         return df.loc[df["product_name"] == produtos[0]]
     else:
         return df.loc[df["product_name"].isin(produtos)]
+
+def coluna_por_mes(df):
+    df["order_date"] = df["order_date"].dt.to_period("M")
+    base_ordenada = df.groupby("order_date").agg(
+        total_value=("total_value", "sum"),
+        quantity=("quantity", "sum"),
+        mean_price=("unit_price", "mean"),
+        n_orders=("order_id", "count"),
+    ).reset_index()
+    base_ordenada["order_date"] = base_ordenada["order_date"].dt.to_timestamp()
+    return base_ordenada

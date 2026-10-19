@@ -15,6 +15,7 @@ Primeiro, é necessario que você tenha todas as bibliotecas instaladas (além d
 
 pip install pandas
 pip install streamlit
+pip install plotly
 
 Feito isso, acesse a pasta do projeto pelo terminal e rode o seguinte comando:
 
