@@ -37,9 +37,9 @@ def orderns_por_metodos_de_pagamento(df,metodo):
         return df.loc[df["payment_method"].isin(metodo)]
 
 def pedidos_por_produtos(df,produtos):
-    if len(produtos):
+    if len(produtos) == 0:
         return False
-    elif len(produtos):
+    elif len(produtos) == 1:
         return df.loc[df["product_name"] == produtos[0]]
     else:
         return df.loc[df["product_name"].isin(produtos)]

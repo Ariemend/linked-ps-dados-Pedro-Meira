@@ -9,15 +9,25 @@ base_de_dados = pd.read_csv("vendas_linked_ps.csv",parse_dates=["order_date"])
 
 #Analise Geral das Regiões
 st.title("Analise das regiões brasileiras",text_alignment="center")
+st.caption("Uma analise individual das regiões brasileiras",text_alignment="center")
 st.divider()
 
-grafico_barra_regiao_valor = px.bar(base_de_dados,x="customer_region",y="total_value",labels={"customer_region":"Região", "total_value":"Valor total"})
+base_faturamento = fl.ordens_por_status(base_de_dados,["Entregue","Em transito"])
+analise_das_regioes = an.analise_de_elementos(base_de_dados,"customer_region")
+grafico_barra_regiao_valor = px.bar(base_faturamento,x="customer_region",y="total_value",labels={"customer_region":"Região", "total_value":"Valor total"})
 grafico_setor_regiao_qtd = px.pie(base_de_dados,names="customer_region",values="quantity",)
+grafico_barra_regiao_taxa = px.bar(analise_das_regioes,x="elemento",y="taxa_de_cancelamento")
 
 st.subheader("Faturamento")
 st.plotly_chart(grafico_barra_regiao_valor)
-st.subheader("Porcentagem das ordens")
-st.plotly_chart(grafico_setor_regiao_qtd)
+col1, col2 = st.columns(2,border=True)
+with col1:
+    st.subheader("Porcentagem das ordens")
+    st.plotly_chart(grafico_setor_regiao_qtd)
+with col2:
+    st.subheader("Taxa de Cancelamento")
+    st.plotly_chart(grafico_barra_regiao_taxa)
+
 
 
 
@@ -28,7 +38,7 @@ base_filtrada_regiao = fl.ordens_por_regioes(base_de_dados,[regiao])
 
 #Analise geral da região
 qtd_regiao = an.numero_das_ordens(base_filtrada_regiao)
-receita_total_regiao = an.receita_das_ordens(fl.ordens_por_status(base_filtrada_regiao,["Entregue","Em transito"]))
+receita_total_regiao = an.receita_das_ordens(base_filtrada_regiao)
 ticket_medio_regiao = round(an.ticket_medio(base_filtrada_regiao),2)
 taxa_cancelamento_regiao = round(an.taxa_cancelamento(base_filtrada_regiao),2)
 grafico_setor_regiao_metodo = px.pie(base_filtrada_regiao,names="payment_method",values="quantity")
@@ -70,8 +80,8 @@ st.dataframe(regiao_analisada)
 #Analise cronologica da região
 base_regiao_tempo = fl.coluna_por_mes(base_filtrada_regiao)
 
-grafico_pedidos_regiao_tempo = px.bar(base_regiao_tempo,x="order_date",y="n_orders")
-grafico_valor_regiao_tempo = px.bar(base_regiao_tempo,x="order_date",y="total_value")
+grafico_pedidos_regiao_tempo = px.bar(base_regiao_tempo,x="order_date",y="n_orders",labels={"order_date" : "Data", "n_orders" : "Número de ordens"})
+grafico_valor_regiao_tempo = px.bar(base_regiao_tempo,x="order_date",y="total_value",labels={"order_date" : "Data", "total_value" : "Valor total"})
 
 st.subheader("Analise Cronologica",text_alignment="center")
 col1, col2 = st.columns(2,border=True)

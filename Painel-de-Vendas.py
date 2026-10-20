@@ -6,7 +6,7 @@ import analise as an
 
 #Inicializando a base de dados e os elementos base do streamlit
 base_de_dados = pd.read_csv('vendas_linked_ps.csv', parse_dates=["order_date"]) #pega a base de dados, transformando os elementos de "order_date" em datetime
-st.sidebar.success("Select a page above:") #inicializa a barra lateral
+st.sidebar.success(body="Selecione uma página acima!") #inicializa a barra lateral
 
 
 #Titulo e apresentacao
@@ -52,13 +52,13 @@ with col2:
 with count1:
     col3a, col3b, col3c = st.columns(3)
     col3a.metric("Total de Pedidos",total_pedidos)
-    col3b.metric("N/ Pedidos Em Transito",total_pedidos_em_transito,delta=(round((total_pedidos_em_transito/total_pedidos)*100,2)),delta_color="green",delta_arrow="off")
+    col3b.metric("N/ Pedidos Em Trânsito",total_pedidos_em_transito,delta=(round((total_pedidos_em_transito/total_pedidos)*100,2)),delta_color="green",delta_arrow="off")
     col3c.metric("N/ Pedidos Cancelados",total_pedidos_cancelados,delta=(round((total_pedidos_cancelados/total_pedidos)*100,2)),delta_color="red",delta_arrow="off")
 
 #Graficos
 col1, col2 = st.columns(2,border=True)
 base_por_mes = fl.coluna_por_mes(pedidos_completos)
-grafico_valor_por_mes = px.bar(base_por_mes,x="order_date",y="total_value")
+grafico_valor_por_mes = px.bar(base_por_mes,x="order_date",y="total_value",labels={"order_date":"Data","total_value":"Valor total"})
 grafico_proporcao_metodo = px.pie(base_de_dados,names="payment_method",values="quantity")
 
 with col1:
