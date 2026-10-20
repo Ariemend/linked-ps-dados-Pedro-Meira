@@ -47,6 +47,10 @@ Apesar de ter feito o meu melhor para realizar esse projeto, tenho algumas ideia
 
 
 -*Adição de dados novos*: Eu gostaria que fosse possível adicionar novas ordens a base de dados, com todas as métricas e informações recalculadas automáticamente após receber a nova informação
+
+
 -*Utilização de gráficos geográficos*: Eu vi na documentação do plotly que eles possuem diversos tipos de gráficos, eu tentei usar uma seleção mais váriada nesse projeto, porém acabei desistindo por uma série de razões. O tipo de gráfico que mais chamou a minha atenção foi os geográficos, que mostram um mapa da região analisada, o que seria ótimo de ter na página de analise das regiões, adicionando mas uma faixa de interatividade.
--*Integração de metas*: Eu acho que ia ser uma feature muito legal se o usuário pudesse colocar uma meta de faturamento, e o app mostrasse o quanto que falta para ele atingir essa meta, além de poder criar metas especificas para região, categoria, e produto e analisar cada uma individualmente.
+
+
++*Integração de metas*: Eu acho que ia ser uma feature muito legal se o usuário pudesse colocar uma meta de faturamento, e o app mostrasse o quanto que falta para ele atingir essa meta, além de poder criar metas especificas para região, categoria, e produto e analisar cada uma individualmente.
 
