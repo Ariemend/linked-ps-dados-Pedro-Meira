@@ -7,7 +7,7 @@ import analise as an
 base_de_dados = pd.read_csv("vendas_linked_ps.csv",parse_dates=["order_date"])
 
 st.title("Insights sobre os dados")
-st.write("Aqui estão 5 informações que eu extrai dos dados que eu achei relevante destacar")
+st.write("Aqui estão 3 informações que eu extrai dos dados que eu achei relevante destacar")
 st.divider()
 
 #Insight 1

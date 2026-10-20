@@ -35,11 +35,12 @@ with col2:
 st.title("Analise individual das regiões")
 regiao = st.selectbox(label=None,options=base_de_dados["customer_region"].unique(),on_change="rerun",placeholder="Escolha uma opção")
 base_filtrada_regiao = fl.ordens_por_regioes(base_de_dados,[regiao])
+faturamento_regiao = fl.ordens_por_status(base_filtrada_regiao,["Entregue","Em transito"])
 
 #Analise geral da região
 qtd_regiao = an.numero_das_ordens(base_filtrada_regiao)
-receita_total_regiao = an.receita_das_ordens(base_filtrada_regiao)
-ticket_medio_regiao = round(an.ticket_medio(base_filtrada_regiao),2)
+receita_total_regiao = an.receita_das_ordens(faturamento_regiao)
+ticket_medio_regiao = round(an.ticket_medio(faturamento_regiao),2)
 taxa_cancelamento_regiao = round(an.taxa_cancelamento(base_filtrada_regiao),2)
 grafico_setor_regiao_metodo = px.pie(base_filtrada_regiao,names="payment_method",values="quantity")
 
@@ -56,9 +57,10 @@ st.plotly_chart(grafico_setor_regiao_metodo)
 
 #Analise categoria região
 regiao_analisada = an.analise_de_elementos(base_filtrada_regiao,"product_category")
-grafico_barra_categoria_regiao_valor = px.bar(regiao_analisada,x="elemento",y="total_value",labels={"elemento" : "Categoria", "total_value" : "Valor total"})
+faturamento_regiao_analisada = an.analise_de_elementos(faturamento_regiao,"product_category")
+grafico_barra_categoria_regiao_valor = px.bar(faturamento_regiao_analisada,x="elemento",y="total_value",labels={"elemento" : "Categoria", "total_value" : "Valor total"})
 grafico_barra_categoria_regiao_taxa_cancelamento = px.bar(regiao_analisada,x="elemento",y="taxa_de_cancelamento",labels={"elemento" : "Categoria", "taxa_de_cancelamento" : "Taxa de Cancelamento"})
-grafico_barra_categoria_regiao_ticket_medio = px.bar(regiao_analisada,x="elemento",y="ticket_medio",labels={"elemento" : "Categoria", "ticket_medio" : "Ticket Medio"})
+grafico_barra_categoria_regiao_ticket_medio = px.bar(faturamento_regiao_analisada,x="elemento",y="ticket_medio",labels={"elemento" : "Categoria", "ticket_medio" : "Ticket Medio"})
 grafico_barra_categoria_regiao_quantidade = px.bar(regiao_analisada,x="elemento",y="quantidade_vendida",labels={"elemento" : "Categoria", "quantidade_vendida" : "Quantidade Vendida"})
 
 st.subheader("Analise das categorias",text_alignment="center")
